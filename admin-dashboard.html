@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Admin Dashboard — Pristage Online Shop</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+  body { background: var(--surface-tint); }
+  .admin-shell { display: flex; min-height: 100vh; }
+  .admin-sidebar {
+    width: 220px;
+    background: var(--primary-dark);
+    color: #fff;
+    padding: 20px 14px;
+    flex-shrink: 0;
+    position: sticky; top: 0; height: 100vh;
+  }
+  .admin-sidebar .brand { color: #fff; margin-bottom: 26px; }
+  .admin-sidebar .mark { background: #fff; color: var(--primary-dark); }
+  .admin-nav { display: flex; flex-direction: column; gap: 2px; }
+  .admin-nav button {
+    text-align: left;
+    background: transparent;
+    border: none;
+    color: #c9ded9;
+    padding: 11px 12px;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-weight: 500;
+  }
+  .admin-nav button.active, .admin-nav button:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .admin-main { flex: 1; padding: 24px; max-width: 1100px; }
+  @media (max-width: 760px) {
+    .admin-shell { flex-direction: column; }
+    .admin-sidebar { width: 100%; height: auto; position: static; padding: 14px; }
+    .admin-nav { flex-direction: row; overflow-x: auto; }
+    .admin-main { padding: 16px; }
+  }
+  .stat-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 24px; }
+  @media (min-width: 640px) { .stat-grid { grid-template-columns: repeat(4,1fr); } }
+  .stat-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-m); padding: 16px; }
+  .stat-card .num { font-family: var(--font-head); font-size: 1.7rem; font-weight: 700; color: var(--primary-dark); }
+  .stat-card .label { font-size: 0.82rem; color: var(--ink-soft); }
+
+  .admin-panel { display: none; }
+  .admin-panel.active { display: block; }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+
+  .table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-m); overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  th { background: var(--surface-tint); font-size: 0.78rem; text-transform: none; color: var(--ink-soft); }
+  td img { width: 44px; height: 44px; object-fit: cover; border-radius: 8px; }
+  .row-actions { display: flex; gap: 6px; }
+  .row-actions button { padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); font-size: 0.8rem; }
+  .row-actions button.danger { border-color: var(--danger); color: var(--danger); }
+  .pill { padding: 3px 9px; border-radius: 999px; font-size: 0.74rem; font-weight: 600; }
+  .pill.available { background: #e2f3ea; color: var(--success); }
+  .pill.out_of_stock { background: #fbe7e4; color: var(--danger); }
+  .pill.featured { background: var(--accent-tint); color: #8a5b0d; margin-left: 4px; }
+
+  .form-grid { display: grid; gap: 14px; }
+  @media (min-width: 700px) { .form-grid.two-col { grid-template-columns: 1fr 1fr; } }
+  .img-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .img-preview img { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
+</style>
+</head>
+<body>
+
+<div id="auth-gate" style="display:flex;min-height:100vh;align-items:center;justify-content:center">
+  <p>Checking access…</p>
+</div>
+
+<div class="admin-shell" id="admin-shell" style="display:none">
+  <aside class="admin-sidebar">
+    <div class="brand"><span class="mark">P</span> Pristage</div>
+    <nav class="admin-nav">
+      <button data-panel="panel-dashboard" class="active">📊 Dashboard</button>
+      <button data-panel="panel-products">📦 Products</button>
+      <button id="nav-add-product">➕ Add Product</button>
+      <button data-panel="panel-settings">⚙️ Settings</button>
+      <button id="logout-btn">🚪 Logout</button>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <section class="admin-panel active" id="panel-dashboard">
+      <div class="panel-head"><h2>Dashboard</h2></div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="num" id="stat-total">0</div><div class="label">Total products</div></div>
+        <div class="stat-card"><div class="num" id="stat-available">0</div><div class="label">Available</div></div>
+        <div class="stat-card"><div class="num" id="stat-out">0</div><div class="label">Out of stock</div></div>
+        <div class="stat-card"><div class="num" id="stat-featured">0</div><div class="label">Featured</div></div>
+      </div>
+      <p class="form-hint">Signed in as <strong id="admin-email">—</strong></p>
+    </section>
+
+    <section class="admin-panel" id="panel-products">
+      <div class="panel-head">
+        <h2>Products</h2>
+        <button class="btn" id="products-add-btn">➕ Add product</button>
+      </div>
+      <div style="margin-bottom:14px">
+        <input id="admin-search" type="search" placeholder="Search products…" style="width:100%;max-width:320px;padding:10px 12px;border-radius:10px;border:1px solid var(--line)" />
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Product</th><th>Price</th><th>Category</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="products-tbody">
+            <tr><td colspan="5" style="text-align:center;padding:30px">Loading products…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="admin-panel" id="panel-settings">
+      <div class="panel-head"><h2>Settings</h2></div>
+      <div class="stat-card" style="max-width:480px">
+        <p><strong>WhatsApp number:</strong> 0769218680</p>
+        <p class="form-hint">To change the WhatsApp number, edit <code>WHATSAPP_NUMBER</code> in <code>supabase-config.js</code> and republish the site.</p>
+        <p class="form-hint">To add another admin, ask them to create a Supabase Auth account, then run the SQL insert shown in <code>supabase-setup.sql</code> (section 7) with their email.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Add / Edit product modal -->
+<div class="modal-overlay" id="product-modal" style="display:none">
+  <div class="modal-card">
+    <button class="modal-close" data-close aria-label="Close">✕</button>
+    <h3 id="modal-title">Add product</h3>
+    <div id="form-error" class="form-error" style="display:none"></div>
+    <form id="product-form">
+      <input type="hidden" id="p-id" />
+      <div class="form-grid two-col">
+        <div class="form-field">
+          <label for="p-name">Product name</label>
+          <input id="p-name" required />
+        </div>
+        <div class="form-field">
+          <label for="p-category">Category</label>
+          <input id="p-category" list="category-options" placeholder="e.g. Refrigerators" required />
+          <datalist id="category-options"></datalist>
+        </div>
+        <div class="form-field">
+          <label for="p-price">Price (KSh)</label>
+          <input id="p-price" type="number" min="0" step="1" required />
+        </div>
+        <div class="form-field">
+          <label for="p-old-price">Old price (optional)</label>
+          <input id="p-old-price" type="number" min="0" step="1" />
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="p-description">Description</label>
+        <textarea id="p-description" placeholder="Describe the product truthfully — features, size, what's included…"></textarea>
+      </div>
+
+      <div class="form-field">
+        <label for="p-delivery">Delivery note (optional)</label>
+        <input id="p-delivery" placeholder="e.g. Free delivery within Nairobi" />
+      </div>
+
+      <div class="form-field">
+        <label for="p-image-file">Main image</label>
+        <input id="p-image-file" type="file" accept="image/*" />
+        <input type="hidden" id="p-image-url" />
+        <div class="img-preview" id="p-image-preview"></div>
+        <span class="form-hint">JPG or PNG, ideally square. Uploading replaces the current image.</span>
+      </div>
+
+      <div class="form-field">
+        <label for="p-more-images">Additional images (optional)</label>
+        <input id="p-more-images" type="file" accept="image/*" multiple />
+        <div class="img-preview" id="p-more-preview"></div>
+      </div>
+
+      <div class="form-grid two-col">
+        <label class="form-check"><input type="checkbox" id="p-available" checked /> Available (in stock)</label>
+        <label class="form-check"><input type="checkbox" id="p-featured" /> Featured on homepage</label>
+      </div>
+
+      <button class="wa-btn" type="submit" id="save-product-btn" style="width:100%;justify-content:center;margin-top:16px">Save product</button>
+    </form>
+  </div>
+</div>
+
+<!-- Delete confirmation -->
+<div class="modal-overlay" id="delete-modal" style="display:none">
+  <div class="modal-card" style="max-width:400px">
+    <h3>Delete this product?</h3>
+    <p>This will permanently remove <strong id="delete-product-name"></strong> from your catalog. This cannot be undone.</p>
+    <div style="display:flex;gap:10px;margin-top:10px">
+      <button class="wa-btn ghost" data-close style="flex:1;justify-content:center">Cancel</button>
+      <button class="wa-btn" id="confirm-delete-btn" style="flex:1;justify-content:center;background:var(--danger);border-color:var(--danger)">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-region" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="products.js"></script>
+<script src="app.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

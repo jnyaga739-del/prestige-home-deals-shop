@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Admin Login — Pristage Online Shop</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+  body { background: var(--surface-tint); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    padding: 32px 26px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: var(--shadow);
+  }
+  .login-card .brand { justify-content: center; margin-bottom: 6px; }
+  .login-card p.sub { text-align: center; margin-bottom: 22px; }
+  .login-btn { width: 100%; justify-content: center; }
+</style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="brand"><span class="mark">P</span> Pristage</div>
+    <p class="sub">Admin sign in</p>
+
+    <div id="login-error" class="form-error" style="display:none"></div>
+
+    <form id="login-form">
+      <div class="form-field">
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="username" required />
+      </div>
+      <div class="form-field">
+        <label for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" required />
+      </div>
+      <button class="wa-btn login-btn" type="submit" id="login-btn">Log in</button>
+    </form>
+    <p class="form-hint" style="text-align:center;margin-top:16px"><a href="index.html">← Back to shop</a></p>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script>
+  const form = document.getElementById("login-form");
+  const errorBox = document.getElementById("login-error");
+  const btn = document.getElementById("login-btn");
+
+  function showError(msg) {
+    errorBox.textContent = msg;
+    errorBox.style.display = "block";
+  }
+
+  async function redirectIfAlreadyAdmin() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) return;
+    const { data: adminRow } = await supabaseClient
+      .from("admins")
+      .select("user_id")
+      .eq("user_id", session.user.id)
+      .maybeSingle();
+    if (adminRow) window.location.href = "admin-dashboard.html";
+  }
+  redirectIfAlreadyAdmin();
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorBox.style.display = "none";
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Signing in…';
+
+    try {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+
+      const { data: adminRow, error: adminErr } = await supabaseClient
+        .from("admins")
+        .select("user_id")
+        .eq("user_id", data.user.id)
+        .maybeSingle();
+
+      if (adminErr) throw adminErr;
+
+      if (!adminRow) {
+        await supabaseClient.auth.signOut();
+        showError("This account is not authorized as an admin. Ask the shop owner to add your email to the admins list.");
+        return;
+      }
+
+      window.location.href = "admin-dashboard.html";
+    } catch (err) {
+      console.error(err);
+      showError(err.message || "Login failed. Please check your email and password and try again.");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Log in";
+    }
+  });
+</script>
+</body>
+</html>

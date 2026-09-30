@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title id="page-title">Product — Pristage Online Shop</title>
+<meta id="meta-desc" name="description" content="View product details and order via WhatsApp from Pristage Online Shop." />
+<meta property="og:type" content="product" />
+<meta id="og-title" property="og:title" content="Pristage Online Shop" />
+<meta id="og-desc" property="og:description" content="" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛍️</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+  .pd-wrap { display: grid; gap: 22px; padding: 20px 0 40px; }
+  @media (min-width: 800px) { .pd-wrap { grid-template-columns: 1fr 1fr; gap: 36px; } }
+  .pd-gallery img { width: 100%; border-radius: var(--radius-l); border: 1px solid var(--line); aspect-ratio: 1/1; object-fit: cover; }
+  .pd-thumbs { display: flex; gap: 8px; margin-top: 10px; }
+  .pd-thumbs img { width: 62px; height: 62px; border-radius: 10px; object-fit: cover; border: 1px solid var(--line); cursor: pointer; }
+  .pd-thumbs img.active { border-color: var(--primary); border-width: 2px; }
+  .breadcrumb { font-size: 0.85rem; color: var(--ink-soft); padding: 14px 0 0; }
+  .breadcrumb a { color: var(--primary); }
+  .pd-actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 0; }
+  .pd-meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0 18px; font-size: 0.85rem; }
+  .pd-meta-row span { background: var(--surface-tint); padding: 6px 12px; border-radius: 999px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-row">
+    <a href="index.html" class="brand"><span class="mark">P</span> Pristage</a>
+    <form class="search-form" id="header-search-form" role="search">
+      <span aria-hidden="true">🔎</span>
+      <input id="header-search-input" type="search" placeholder="Search fridges, cookers, TVs…" aria-label="Search products" />
+    </form>
+    <div class="header-actions">
+      <button class="icon-btn" id="cart-btn" aria-label="View order list">🛒<span class="icon-badge" id="cart-badge">0</span></button>
+      <a class="icon-btn" href="#" id="header-wa" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">💬</a>
+      <button class="icon-btn" id="menu-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobile-menu">
+  <button class="modal-close" id="menu-close" aria-label="Close menu">✕</button>
+  <div class="brand"><span class="mark">P</span> Pristage</div>
+  <ul>
+    <li><a class="menu-link" href="index.html">Home</a></li>
+    <li><a class="menu-link" href="index.html#catalog-section">Shop</a></li>
+    <li><a class="menu-link" href="index.html#footer-contact">Contact</a></li>
+  </ul>
+  <a class="wa-btn" target="_blank" rel="noopener" id="menu-wa">Chat on WhatsApp</a>
+</div>
+<div class="mobile-menu-backdrop" id="menu-backdrop"></div>
+
+<main class="container">
+  <p class="breadcrumb"><a href="index.html">Home</a> / <span id="crumb-category">Products</span></p>
+
+  <div id="pd-loading" class="loading-state" style="padding:60px 0"><span class="spinner" style="border-top-color:var(--primary);border-color:var(--line)"></span><p>Loading product…</p></div>
+
+  <div id="pd-error" class="empty-state" style="display:none">
+    <span class="big">⚠️</span>
+    <p id="pd-error-msg">We couldn't find this product.</p>
+    <a class="btn" href="index.html">Back to shop</a>
+  </div>
+
+  <div id="pd-content" class="pd-wrap" style="display:none">
+    <div class="pd-gallery">
+      <img id="pd-main-image" src="" alt="" />
+      <div class="pd-thumbs" id="pd-thumbs"></div>
+    </div>
+    <div class="pd-info">
+      <h1 id="pd-name"></h1>
+      <div class="price-row" style="font-size:1.15rem">
+        <span class="price" id="pd-price" style="font-size:1.4rem"></span>
+        <span class="price-old" id="pd-old-price"></span>
+        <span class="badge" id="pd-discount" style="position:static;display:none"></span>
+      </div>
+      <div class="pd-meta-row">
+        <span id="pd-stock"></span>
+        <span id="pd-category"></span>
+        <span id="pd-delivery" style="display:none"></span>
+      </div>
+      <p id="pd-description"></p>
+
+      <div class="pd-actions">
+        <a class="wa-btn" id="pd-wa-order" target="_blank" rel="noopener">Order on WhatsApp</a>
+        <button class="wa-btn ghost" id="pd-add-list">Add to order list</button>
+      </div>
+      <p class="form-hint">Message us on WhatsApp to confirm availability, final price and delivery to your area.</p>
+    </div>
+  </div>
+
+  <section class="section" id="related-section" style="display:none">
+    <div class="section-head"><h2>You may also like</h2></div>
+    <div class="product-grid" id="related-grid"></div>
+  </section>
+</main>
+
+<footer class="site-footer" id="footer-contact">
+  <div class="container footer-grid">
+    <div>
+      <h4>Pristage Online Shop</h4>
+      <p>Your convenient online shop for selected home appliances and household products.</p>
+    </div>
+    <div>
+      <h4>Links</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#catalog-section">Shop</a></li>
+        <li><a href="index.html#footer-contact">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <ul>
+        <li>WhatsApp: 0769218680</li>
+        <li><a target="_blank" rel="noopener" id="footer-wa">Message us on WhatsApp</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p style="color:#97b8b1;margin:0">© <span id="year"></span> Pristage Online Shop. Prices and availability may change — please confirm on WhatsApp before ordering.</p>
+  </div>
+</footer>
+
+<nav class="bottom-nav" aria-label="Mobile navigation">
+  <a href="index.html"><span>🏠</span>Home</a>
+  <a href="index.html#catalog-section"><span>🔎</span>Shop</a>
+  <a href="#" id="bottom-cart"><span>🛒</span>Orders</a>
+  <a href="#" id="bottom-wa"><span>💬</span>WhatsApp</a>
+</nav>
+
+<div class="modal-overlay" id="cart-modal" style="display:none">
+  <div class="modal-card">
+    <button class="modal-close" data-close aria-label="Close">✕</button>
+    <h3>Your order list</h3>
+    <p class="form-hint">Add products, then send them all as one WhatsApp message. This does not place the order automatically — we'll confirm details with you on WhatsApp.</p>
+    <div class="cart-items"></div>
+    <div class="cart-footer" style="display:none">
+      <div class="cart-total-row"><span>Total</span><span class="cart-total">KSh 0</span></div>
+      <button class="wa-btn cart-send">Send order via WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-region" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="products.js"></script>
+<script src="app.js"></script>
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+  const GENERAL_WA_MESSAGE = "Hello Pristage Online Shop, I would like to know more about your products.";
+  const generalWaLink = buildWhatsAppLink(GENERAL_WA_MESSAGE);
+  ["header-wa", "menu-wa", "footer-wa"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.href = generalWaLink;
+  });
+  document.getElementById("bottom-wa").addEventListener("click", (e) => { e.preventDefault(); window.open(generalWaLink, "_blank"); });
+  document.getElementById("bottom-cart").addEventListener("click", (e) => { e.preventDefault(); document.getElementById("cart-btn").click(); });
+
+  // Homepage search form on this page just sends the visitor to the shop with the term.
+  document.getElementById("header-search-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const val = encodeURIComponent(document.getElementById("header-search-input").value || "");
+    window.location.href = "index.html?q=" + val + "#catalog-section";
+  });
+
+  async function loadProduct() {
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get("slug");
+    const loading = document.getElementById("pd-loading");
+    const errorBox = document.getElementById("pd-error");
+    const content = document.getElementById("pd-content");
+
+    if (!slug) {
+      loading.style.display = "none";
+      errorBox.style.display = "block";
+      return;
+    }
+
+    let product;
+    try {
+      product = await ProductsAPI.fetchBySlug(slug);
+    } catch (err) {
+      console.error(err);
+      loading.style.display = "none";
+      document.getElementById("pd-error-msg").textContent = "We couldn't load this product right now. Please check your connection and try again.";
+      errorBox.style.display = "block";
+      return;
+    }
+
+    if (!product) {
+      loading.style.display = "none";
+      errorBox.style.display = "block";
+      return;
+    }
+
+    loading.style.display = "none";
+    content.style.display = "grid";
+
+    document.getElementById("page-title").textContent = product.name + " — Pristage Online Shop";
+    document.getElementById("meta-desc").content = (product.description || product.name).slice(0, 160);
+    document.getElementById("og-title").content = product.name;
+    document.getElementById("og-desc").content = (product.description || "").slice(0, 160);
+    document.getElementById("crumb-category").textContent = product.category || "Products";
+
+    const images = [product.image, ...(product.additional_images || [])].filter(Boolean);
+    const mainImg = document.getElementById("pd-main-image");
+    mainImg.src = images[0] || placeholderImage(product.name);
+    mainImg.alt = product.name;
+
+    const thumbs = document.getElementById("pd-thumbs");
+    if (images.length > 1) {
+      thumbs.innerHTML = images
+        .map((src, i) => `<img src="${src}" alt="${escapeHtml(product.name)} image ${i + 1}" class="${i === 0 ? "active" : ""}" data-src="${src}" />`)
+        .join("");
+      thumbs.querySelectorAll("img").forEach((img) => {
+        img.addEventListener("click", () => {
+          mainImg.src = img.dataset.src;
+          thumbs.querySelectorAll("img").forEach((t) => t.classList.remove("active"));
+          img.classList.add("active");
+        });
+      });
+    }
+
+    document.getElementById("pd-name").textContent = product.name;
+    document.getElementById("pd-price").textContent = "KSh " + formatPrice(product.price);
+    if (product.old_price && Number(product.old_price) > Number(product.price)) {
+      document.getElementById("pd-old-price").textContent = "KSh " + formatPrice(product.old_price);
+      const discount = ProductUtils.discountPercent(product.price, product.old_price);
+      const badge = document.getElementById("pd-discount");
+      badge.textContent = "-" + discount + "%";
+      badge.style.display = "inline-block";
+    }
+    document.getElementById("pd-stock").textContent =
+      product.stock_status === "available" ? "✅ Available" : "⏳ Out of stock — ask us about restock";
+    document.getElementById("pd-category").textContent = product.category;
+    if (product.delivery_note) {
+      const d = document.getElementById("pd-delivery");
+      d.textContent = "🚚 " + product.delivery_note;
+      d.style.display = "inline-block";
+    }
+    document.getElementById("pd-description").textContent =
+      product.description || "Contact us on WhatsApp for more details about this product.";
+
+    const waLink = buildWhatsAppLink(whatsAppProductMessage(product));
+    document.getElementById("pd-wa-order").href = waLink;
+    document.getElementById("pd-add-list").addEventListener("click", () => OrderList.add(product));
+
+    // Related products
+    try {
+      const related = await ProductsAPI.fetchRelated(product.category, product.id, 4);
+      if (related.length) {
+        document.getElementById("related-grid").innerHTML = related.map(productCardHtml).join("");
+        document.getElementById("related-section").style.display = "block";
+      }
+    } catch (err) {
+      console.error(err);
+      // Related products are a nice-to-have; fail silently.
+    }
+  }
+
+  loadProduct();
+</script>
+</body>
+</html>

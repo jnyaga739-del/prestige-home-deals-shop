@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Pristage Online Shop — Home Appliances in Kenya, Order via WhatsApp</title>
+<meta name="description" content="Shop affordable home appliances and household products in Kenya. Browse fridges, cookers, TVs, washing machines and more, then order directly on WhatsApp." />
+<meta property="og:title" content="Pristage Online Shop" />
+<meta property="og:description" content="Quality home appliances and household products in Kenya. Order easily on WhatsApp." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛍️</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-row">
+    <a href="index.html" class="brand"><span class="mark">P</span> Pristage</a>
+
+    <form class="search-form" id="header-search-form" role="search">
+      <span aria-hidden="true">🔎</span>
+      <input id="header-search-input" type="search" placeholder="Search fridges, cookers, TVs…" aria-label="Search products" />
+    </form>
+
+    <div class="header-actions">
+      <button class="icon-btn" id="cart-btn" aria-label="View order list">
+        🛒
+        <span class="icon-badge" id="cart-badge">0</span>
+      </button>
+      <a class="icon-btn" href="#" id="header-wa" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">💬</a>
+      <button class="icon-btn" id="menu-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+    </div>
+  </div>
+
+  <nav class="category-strip" aria-label="Quick categories">
+    <a class="chip" href="#catalog-section">All Products</a>
+    <a class="chip" href="#catalog-section">Refrigerators</a>
+    <a class="chip" href="#catalog-section">Cookers</a>
+    <a class="chip" href="#catalog-section">TVs</a>
+    <a class="chip" href="#catalog-section">Washing Machines</a>
+    <a class="chip" href="#catalog-section">Kitchen Appliances</a>
+  </nav>
+</header>
+
+<div class="mobile-menu" id="mobile-menu">
+  <button class="modal-close" id="menu-close" aria-label="Close menu">✕</button>
+  <div class="brand"><span class="mark">P</span> Pristage</div>
+  <ul>
+    <li><a class="menu-link" href="index.html">Home</a></li>
+    <li><a class="menu-link" href="#catalog-section">Shop</a></li>
+    <li><a class="menu-link" href="#categories-section">Categories</a></li>
+    <li><a class="menu-link" href="#footer-contact">Contact</a></li>
+  </ul>
+  <a class="wa-btn" target="_blank" rel="noopener" id="menu-wa">Chat on WhatsApp</a>
+</div>
+<div class="mobile-menu-backdrop" id="menu-backdrop"></div>
+
+<main>
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>Quality products. Great value. Delivered to you.</h1>
+      <p>Shop selected home appliances and household products from Pristage Online Shop. Browse our products and contact us directly on WhatsApp to order.</p>
+      <div class="hero-ctas">
+        <a class="btn" href="#catalog-section">Shop now</a>
+        <a class="btn outline" id="hero-wa" target="_blank" rel="noopener">WhatsApp us</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="categories-section">
+    <div class="container">
+      <div class="section-head"><h2>Shop by category</h2></div>
+      <div class="cat-grid" id="cat-grid">
+        <div class="skeleton" style="height:96px"></div>
+        <div class="skeleton" style="height:96px"></div>
+        <div class="skeleton" style="height:96px"></div>
+        <div class="skeleton" style="height:96px"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>Featured products</h2>
+        <a class="link" href="#catalog-section">See all</a>
+      </div>
+      <div class="product-grid" id="featured-grid">
+        <div class="skeleton" style="height:220px"></div>
+        <div class="skeleton" style="height:220px"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="catalog-section">
+    <div class="container">
+      <div class="section-head">
+        <h2>All products</h2>
+        <span class="form-hint" id="result-count"></span>
+      </div>
+
+      <form class="filter-bar" onsubmit="return false" role="search" aria-label="Filter products">
+        <input class="visually-hidden" />
+        <select id="filter-category" aria-label="Filter by category"><option value="all">All categories</option></select>
+        <select id="filter-availability" aria-label="Filter by availability">
+          <option value="all">All availability</option>
+          <option value="available">In stock</option>
+          <option value="out_of_stock">Out of stock</option>
+        </select>
+        <select id="sort-select" aria-label="Sort products">
+          <option value="newest">Newest</option>
+          <option value="featured">Featured first</option>
+          <option value="price_asc">Price: low to high</option>
+          <option value="price_desc">Price: high to low</option>
+        </select>
+      </form>
+
+      <div style="margin-bottom:14px">
+        <input id="search-input" type="search" placeholder="Search products…" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--line);font-size:0.95rem" aria-label="Search all products" />
+      </div>
+
+      <div class="product-grid" id="catalog-grid"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><h2>Why shop with us</h2></div>
+      <div class="reasons-grid">
+        <div class="reason-card">
+          <span class="ico">💬</span>
+          <div><h4>Easy WhatsApp ordering</h4><p>Message us directly to ask about a product or place an order — no complicated checkout.</p></div>
+        </div>
+        <div class="reason-card">
+          <span class="ico">🛍️</span>
+          <div><h4>Convenient online shopping</h4><p>Browse, search and compare products from your phone, anytime.</p></div>
+        </div>
+        <div class="reason-card">
+          <span class="ico">🚚</span>
+          <div><h4>Delivery available</h4><p>Message us for delivery details and arrangements for your area.</p></div>
+        </div>
+        <div class="reason-card">
+          <span class="ico">🧾</span>
+          <div><h4>Carefully selected products</h4><p>We list products we believe offer good value for Kenyan households.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" id="footer-contact">
+  <div class="container footer-grid">
+    <div>
+      <h4>Pristage Online Shop</h4>
+      <p>Your convenient online shop for selected home appliances and household products.</p>
+    </div>
+    <div>
+      <h4>Links</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#catalog-section">Shop</a></li>
+        <li><a href="#categories-section">Categories</a></li>
+        <li><a href="#footer-contact">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <ul>
+        <li>WhatsApp: 0769218680</li>
+        <li><a target="_blank" rel="noopener" id="footer-wa">Message us on WhatsApp</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p style="color:#97b8b1;margin:0 0 6px">© <span id="year"></span> Pristage Online Shop. Prices and availability may change — please confirm on WhatsApp before ordering.</p>
+    <p style="color:#97b8b1;margin:0">Delivery information, privacy and terms are shared on request via WhatsApp.</p>
+  </div>
+</footer>
+
+<nav class="bottom-nav" aria-label="Mobile navigation">
+  <a href="index.html" class="active"><span>🏠</span>Home</a>
+  <a href="#catalog-section"><span>🔎</span>Shop</a>
+  <a href="#" id="bottom-cart"><span>🛒</span>Orders</a>
+  <a href="#" id="bottom-wa"><span>💬</span>WhatsApp</a>
+</nav>
+
+<div class="modal-overlay" id="cart-modal" style="display:none">
+  <div class="modal-card">
+    <button class="modal-close" data-close aria-label="Close">✕</button>
+    <h3>Your order list</h3>
+    <p class="form-hint">Add products, then send them all as one WhatsApp message. This does not place the order automatically — we'll confirm details with you on WhatsApp.</p>
+    <div class="cart-items"></div>
+    <div class="cart-footer" style="display:none">
+      <div class="cart-total-row"><span>Total</span><span class="cart-total">KSh 0</span></div>
+      <button class="wa-btn cart-send">Send order via WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-region" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="products.js"></script>
+<script src="app.js"></script>
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // Wire up every WhatsApp entry point with a friendly opening message.
+  const GENERAL_WA_MESSAGE = "Hello Pristage Online Shop, I would like to know more about your products.";
+  const waLink = buildWhatsAppLink(GENERAL_WA_MESSAGE);
+  ["header-wa", "hero-wa", "menu-wa", "footer-wa"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.href = waLink;
+  });
+  const bottomWa = document.getElementById("bottom-wa");
+  if (bottomWa) bottomWa.addEventListener("click", (e) => { e.preventDefault(); window.open(waLink, "_blank"); });
+
+  // Bottom-nav "Orders" opens the cart modal
+  document.getElementById("bottom-cart").addEventListener("click", (e) => {
+    e.preventDefault();
+    document.getElementById("cart-btn").click();
+  });
+</script>
+</body>
+</html>
